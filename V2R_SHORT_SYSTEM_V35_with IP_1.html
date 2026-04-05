@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="V2R">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="manifest" href="data:application/json,{%22name%22:%22V2R%20Scanner%22,%22short_name%22:%22V2R%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%230D1B2A%22,%22theme_color%22:%22%230D1B2A%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20100%20100%27%3E%3Crect%20width=%27100%27%20height=%27100%27%20rx=%2720%27%20fill=%27%230D1B2A%27/%3E%3Ctext%20y=%27.9em%27%20font-size=%2780%27%3E%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+<title>V2R Scanner</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0D1B2A;color:#e8e6df;min-height:100dvh;padding-bottom:max(env(safe-area-inset-bottom),16px)}
+.topbar{background:#0D1B2A;padding:max(env(safe-area-inset-top),14px) 16px 8px;position:sticky;top:0;z-index:100;border-bottom:.5px solid rgba(255,255,255,.1)}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+h1{font-size:17px;font-weight:700;color:#fff}
+.meta{font-size:11px;color:#7fa}
+.btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer}
+.btn:active{opacity:.6}
+.spin{display:inline-block;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pbar{height:3px;background:#1E3A5F;margin-top:5px;border-radius:2px;overflow:hidden;display:none}
+.pbar.on{display:block}
+.pfill{height:100%;background:#27AE60;transition:width .3s ease;width:0%}
+.ptxt{font-size:10px;color:#888;margin-top:2px;display:none}
+.ptxt.on{display:block}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 16px 6px}
+.sc{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 6px;text-align:center}
+.sl{font-size:10px;color:#777;margin-bottom:3px}
+.sv{font-size:20px;font-weight:700}
+.red{color:#E74C3C}.grn{color:#27AE60}
+.abar{margin:0 16px 6px;padding:9px 13px;border-radius:10px;font-size:11px;font-weight:600;display:none;line-height:1.5}
+.abar.on{display:block;background:rgba(192,57,43,.25);border:1px solid #C0392B;color:#ff9f8a}
+.ebar{margin:4px 16px 6px;padding:8px 13px;border-radius:10px;font-size:11px;display:none;background:rgba(192,57,43,.2);border:1px solid #C0392B;color:#ff9f8a}
+.ebar.on{display:block}
+.stit{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.8px;padding:7px 16px 2px}
+.card{margin:4px 16px;background:rgba(255,255,255,.05);border-radius:13px;border:.5px solid rgba(255,255,255,.08);overflow:hidden}
+.chdr{display:flex;align-items:center;gap:8px;padding:10px 13px 6px}
+.sbg{font-size:9px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:.3px;white-space:nowrap}
+.SN{background:#C0392B;color:#fff}.SR{background:#E74C3C;color:#fff}
+.LN{background:#1D6A40;color:#fff}.LR{background:#27AE60;color:#fff}
+.LW{background:#E67E22;color:#fff}
+.S1{background:rgba(231,76,60,.2);color:#E74C3C}.S2{background:rgba(255,255,255,.08);color:#777}
+.L1{background:rgba(39,174,96,.2);color:#27AE60}.L2{background:rgba(255,255,255,.08);color:#777}
+.sym{font-size:16px;font-weight:800;color:#fff;flex:1}
+.stb{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px}
+.SS{background:rgba(231,76,60,.2);color:#E74C3C}.LS{background:rgba(39,174,96,.2);color:#27AE60}
+.ha{font-size:11px;font-weight:600}
+.hh{color:#27AE60}.hw{color:#E67E22}.ho{color:#666}
+.cbody{padding:0 13px 10px;display:grid;gap:6px}
+.chips{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.chip{font-size:10px;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.cXX{background:rgba(39,174,96,.2);color:#27AE60}.cDD{background:rgba(139,0,0,.5);color:#ff9f8a}
+.cXD{background:rgba(39,174,96,.15);color:#7dcea0}.cDX{background:rgba(231,76,60,.15);color:#E74C3C}
+.cQ{background:rgba(255,255,255,.08);color:#777}
+.nG{background:rgba(39,174,96,.15);color:#27AE60}.nR{background:rgba(231,76,60,.15);color:#E74C3C}
+.note{background:rgba(0,0,0,.2);border-radius:8px;padding:8px 10px;font-size:11px;line-height:1.7;color:#aaa}
+.pass{color:#27AE60;font-weight:700}.fail{color:#E74C3C}.wait{color:#E67E22}
+.eprow{display:flex;align-items:center;justify-content:space-between}
+.epl{font-size:11px;color:#666}
+.epv{font-size:13px;font-weight:700;color:#5dade2;font-variant-numeric:tabular-nums}
+.epn{font-size:12px;color:#E67E22;font-style:italic}
+.vn{color:#ccc}.vh{color:#27AE60;font-weight:700}.vx{color:#C0392B;font-weight:700}
+.pt{font-size:10px;color:#666}
+.dvd{height:.5px;background:rgba(255,255,255,.05);margin:2px 16px}
+.empty{text-align:center;padding:60px 20px;color:#555}
+.fmsg{text-align:center;padding:50px 20px;color:#888;font-size:13px}
+</style></head><body>
+<div class="topbar">
+  <div class="trow">
+    <h1>V2R Scanner</h1>
+    <button class="btn" onclick="doScan()"><span id="ico">&#8635;</span> Refresh</button>
+  </div>
+  <div class="meta" id="meta">San sang...</div>
+  <div class="pbar" id="pb"><div class="pfill" id="pf"></div></div>
+  <div class="ptxt" id="pt"></div>
+</div>
+<div id="eb" class="ebar"></div>
+<div id="ab" class="abar"></div>
+<div class="sum">
+  <div class="sc"><div class="sl">Tin hieu</div><div class="sv" id="st">-</div></div>
+  <div class="sc"><div class="sl">SHORT</div><div class="sv red" id="ss">-</div></div>
+  <div class="sc"><div class="sl">LONG</div><div class="sv grn" id="sl2">-</div></div>
+  <div class="sc"><div class="sl">Coins</div><div class="sv" id="sc2">-</div></div>
+</div>
+<div id="main"><div class="fmsg">Bam Refresh de bat dau quet<br><small style="color:#555;margin-top:8px;display:block">Mat 3-5 phut. Giu man hinh sang trong khi quet!</small></div></div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────
+const CFG = {
+  A_runup5_min: 10.0, A_vol_min: 2.0,
+  B_body_min:    8.0, B_vol_min: 2.0,
+  min_candles: 12, vn1_thresh: 0.9,
+  vol_min: 10, window_hours: 24,
+  FAPI: 'https://fapi.binance.com'
+};
+
+// ── UI helpers ───────────────────────────────────────────────────
+const ORD=['SHORT NOW','SHORT READY','LONG NOW','LONG READY','LONG WATCH','SHORT R-1','SHORT R-2','LONG R-1','LONG R-2'];
+const BG={'SHORT NOW':'SN','SHORT READY':'SR','LONG NOW':'LN','LONG READY':'LR','LONG WATCH':'LW','SHORT R-1':'S1','SHORT R-2':'S2','LONG R-1':'L1','LONG R-2':'L2'};
+const DS={'SHORT NOW':'n+2 dang mo - vao SHORT ngay','SHORT READY':'n+1 dong DO + vN1>0.9 - cho open n+2','LONG NOW':'k+1 dang mo - vao LONG ngay','LONG READY':'Tim thay Vol>n0 - cho open k+1','LONG WATCH':'Dang cho Vol>n0 trong 24h','SHORT R-1':'Entry 1 nen truoc','SHORT R-2':'Entry 2 nen truoc','LONG R-1':'Entry 1 nen truoc','LONG R-2':'Entry 2 nen truoc'};
+
+function caseC(c){const m={'XANH_XANH':['cXX','Xanh-Xanh'],'DO_DO':['cDD','Do-Do'],'XANH_DO':['cXD','Xanh-Do'],'DO_XANH':['cDX','Do-Xanh']};const[cl,lb]=m[c]||['cQ',c||'?'];return`<span class="chip ${cl}">${lb}</span>`;}
+function nC(v,l){if(v===null||v===undefined)return`<span class="chip cQ">${l}=?</span>`;return`<span class="chip ${v?'nG':'nR'}">${l} ${v?'Xanh':'Do'}</span>`;}
+function haS(h){if(h<=4)return`<span class="ha hh">${h.toFixed(1)}h</span>`;if(h<=12)return`<span class="ha hw">${h.toFixed(1)}h</span>`;return`<span class="ha ho">${h.toFixed(1)}h</span>`;}
+function vS(v){if(v>=100)return`<span class="vx">${v.toFixed(1)}x</span>`;if(v>=23)return`<span class="vh">${v.toFixed(1)}x</span>`;return`<span class="vn">${v.toFixed(1)}x</span>`;}
+function fN(n){if(!n)return'';return n.replace(/(DK\d: PASS[^|]*)/g,'<span class="pass">$1</span>').replace(/(DK\d: Khong pass[^|]*)/g,'<span class="fail">$1</span>').replace(/(DK\d: Cho[^|]*)/g,'<span class="wait">$1</span>').replace(/[|]/g,'<br>');}
+
+function setProgress(txt, pct){
+  document.getElementById('pb').className='pbar on';
+  document.getElementById('pt').className='ptxt on';
+  document.getElementById('pt').textContent=txt;
+  document.getElementById('pf').style.width=pct+'%';
+}
+function clearProgress(){
+  document.getElementById('pb').className='pbar';
+  document.getElementById('pt').className='ptxt';
+}
+function setError(msg){
+  const e=document.getElementById('eb');
+  if(msg){e.textContent='! '+msg;e.className='ebar on';}
+  else{e.className='ebar';}
+}
+
+// ── Scanner logic (JS port of Python scanner_color) ───────────────
+function avgVolRolling(vol, winSize=10){
+  // rolling mean shift(1): avg of previous window candles
+  const out=new Float64Array(vol.length);
+  for(let i=0;i<vol.length;i++){
+    if(i===0){out[i]=0;continue;}
+    let s=0,n=0;
+    for(let j=Math.max(0,i-winSize);j<i;j++){s+=vol[j];n++;}
+    out[i]=n>0?s/n:0;
+  }
+  return out;
+}
+
+function shortState(ne, n1red, vn1){
+  if(!n1red||vn1<=CFG.vn1_thresh)return null;
+  if(ne===1)return'SHORT READY';
+  if(ne===2)return'SHORT NOW';
+  if(ne===3)return'SHORT R-1';
+  if(ne===4)return'SHORT R-2';
+  if(ne>=5)return'SHORT HIST';
+  return null;
+}
+
+function longState(ne, fk){
+  if(fk===null)return'LONG WATCH';
+  const d=ne-fk;
+  if(d===0)return'LONG READY';
+  if(d===1)return'LONG NOW';
+  if(d===2)return'LONG R-1';
+  if(d===3)return'LONG R-2';
+  if(d>=4)return'LONG HIST';
+  return null;
+}
+
+function scanCoin(sym, klines){
+  // klines: array of [ts,open,high,low,close,vol,...]
+  const n=klines.length;
+  if(n<CFG.min_candles+5)return[];
+
+  const op=new Float64Array(n),cl=new Float64Array(n);
+  const vol=new Float64Array(n);
+  const ts=[];
+
+  for(let i=0;i<n;i++){
+    const k=klines[i];
+    op[i]=parseFloat(k[1]);
+    cl[i]=parseFloat(k[4]);
+    vol[i]=parseFloat(k[5]);
+    // format datetime UTC+7
+    const d=new Date(k[0]+7*3600000);
+    ts.push(d.toISOString().slice(0,16).replace('T',' '));
+  }
+
+  const avgVol=avgVolRolling(vol,10);
+  const latest=n-1;
+  const refMs=klines[latest][0];
+  const maxBack=Math.min(latest-CFG.min_candles, CFG.window_hours+26);
+  const results=[];
+
+  for(let ne=0;ne<=maxBack;ne++){
+    const n0i=latest-ne;
+    if(n0i<CFG.min_candles)break;
+
+    const ha=(refMs-klines[n0i][0])/(3600*1000);
+    if(ha>CFG.window_hours)break;
+
+    const c0=cl[n0i],v0=vol[n0i],avgV=avgVol[n0i];
+    if(avgV<=0)continue;
+
+    const ru5=(c0-cl[Math.max(0,n0i-5)])/cl[Math.max(0,n0i-5)]*100;
+    const vs=v0/avgV;
+    const bp=op[n0i]>0?(c0-op[n0i])/op[n0i]*100:0;
+    const sa=(ru5>=CFG.A_runup5_min)&&(vs>=CFG.A_vol_min);
+    const sb=(bp>=CFG.B_body_min)&&(vs>=CFG.B_vol_min)&&!sa;
+    if(!(sa||sb)||vs<=CFG.vol_min)continue;
+
+    const slbl=sa?'A':'B';
+    const n0ts=ts[n0i];
+    // Helper: tinh entry time tu index
+    const entryTs=(idx)=>{
+      if(idx<0||idx>=n)return null;
+      return ts[idx];
+    };
+
+    if(ne===0){
+      results.push({state:'PUMP_0',sig_type:'PUMP_0',symbol:sym,setup:slbl,
+        vol_spike:+vs.toFixed(2),runup5:+ru5.toFixed(2),hours_ago:+ha.toFixed(1),
+        n0_time:n0ts,entry_price:null,note:'',case_lbl:'?',n2_green:null,n3_green:null});
+      continue;
+    }
+
+    const n1i=n0i+1;
+    const n1r=(n1i<=latest)&&(cl[n1i]<op[n1i]);
+    if(!n1r)continue;
+    const vn1=v0>0?vol[n1i]/v0:0;
+
+    // case colors
+    const n2g=ne>2?(cl[n0i+2]>=op[n0i+2]):null;
+    const n3g=ne>3?(cl[n0i+3]>=op[n0i+3]):null;
+    let clbl='?';
+    if(n2g!==null&&n3g!==null){
+      if(n2g&&n3g)clbl='XANH_XANH';
+      else if(!n2g&&!n3g)clbl='DO_DO';
+      else if(n2g)clbl='XANH_DO';
+      else clbl='DO_XANH';
+    }else if(n2g!==null){
+      clbl=(n2g?'n+2=Xanh':'n+2=Do')+' / n+3=?';
+    }
+
+    // DK1 DK2
+    const sfired=vn1>CFG.vn1_thresh;
+    let fk=null;
+    for(let k=1;k<Math.min(ne+1,25);k++){
+      const ki=n0i+k;
+      if(ki>=latest)break;
+      if(vol[ki]/v0>1.0){
+        if(k===1&&sfired)continue;
+        fk=k;break;
+      }
+    }
+
+    const dk1=sfired?`DK1: PASS (vN1=${vn1.toFixed(2)}) -> Entry SHORT@n+2`:`DK1: Khong pass (vN1=${vn1.toFixed(2)})`;
+    const dk2=fk!==null?`DK2: PASS Vol(n+${fk})=${(vol[n0i+fk]/v0).toFixed(2)}x -> Entry LONG@n+${fk+1}`:'DK2: Cho trong 24h (chua co Vol>n0)';
+    const note=dk1+'  |  '+dk2;
+
+    // SHORT
+    const ss=shortState(ne,n1r,vn1);
+    if(ss){
+      const ep2=(n0i+2<=latest&&op[n0i+2]>0)?op[n0i+2]:null;
+      const et2=entryTs(n0i+2);
+      results.push({state:ss,sig_type:'SHORT',symbol:sym,setup:slbl,
+        vol_spike:+vs.toFixed(2),runup5:+ru5.toFixed(2),hours_ago:+ha.toFixed(1),
+        n0_time:n0ts,vn1_ratio:+vn1.toFixed(3),entry_price:ep2,entry_time:et2,note,
+        case_lbl:clbl,n2_green:n2g,n3_green:n3g});
+    }
+
+    // LONG
+    const ls=longState(ne,fk);
+    if(ls){
+      let epk=null;
+      if(fk!==null){const k1i=n0i+fk+1;epk=(k1i<=latest&&op[k1i]>0)?op[k1i]:null;}
+      const etk=fk!==null?entryTs(n0i+fk+1):null;
+      results.push({state:ls,sig_type:'LONG',symbol:sym,setup:slbl,
+        vol_spike:+vs.toFixed(2),runup5:+ru5.toFixed(2),hours_ago:+ha.toFixed(1),
+        n0_time:n0ts,found_k:fk,entry_price:epk,entry_time:etk,note,
+        case_lbl:clbl,n2_green:n2g,n3_green:n3g});
+    }
+  }
+  return results;
+}
+
+// ── Fetch helpers ─────────────────────────────────────────────────
+async function getSymbols(){
+  const r=await fetch(`${CFG.FAPI}/fapi/v1/exchangeInfo`);
+  if(!r.ok)throw new Error('Binance loi '+r.status+' - Thu lai sau');
+  const d=await r.json();
+  return d.symbols
+    .filter(s=>s.quoteAsset==='USDT'&&s.status==='TRADING'&&s.contractType==='PERPETUAL')
+    .map(s=>s.symbol).sort();
+}
+
+async function getKlines(sym){
+  const limit=169;  // 7 ngay x 24h + 1, du cho window 24h + buffer
+  const r=await fetch(`${CFG.FAPI}/fapi/v1/klines?symbol=${sym}&interval=1h&limit=${limit}`);
+  if(!r.ok)return null;
+  return await r.json();
+}
+
+// ── Main scan ─────────────────────────────────────────────────────
+let scanning=false;
+async function doScan(){
+  if(scanning)return;
+  scanning=true;
+  document.getElementById('ico').className='spin';
+  setError('');
+  document.getElementById('main').innerHTML='<div class="fmsg">Dang quet Binance Futures...<br><small style="color:#555;margin-top:8px;display:block">Lan dau mat 3-5 phut</small></div>';
+
+  try{
+    setProgress('Dang lay danh sach coin...',2);
+    const syms=await getSymbols();
+    const total=syms.length;
+    let allResults=[],nOk=0,nFail=0;
+
+    // Fetch in batches of 10 parallel
+    const BATCH=10;
+    for(let i=0;i<total;i+=BATCH){
+      const batch=syms.slice(i,i+BATCH);
+      const pct=Math.round((i/total)*95)+2;
+      setProgress(`Fetch ${i+1}-${Math.min(i+BATCH,total)}/${total}`,pct);
+
+      const results=await Promise.allSettled(batch.map(async sym=>{
+        try{
+          const klines=await getKlines(sym);
+          if(!klines||klines.length<CFG.min_candles+5)return[];
+          return scanCoin(sym,klines);
+        }catch(e){return[];}
+      }));
+
+      for(const r of results){
+        if(r.status==='fulfilled'){
+          if(r.value.length>0)allResults=allResults.concat(r.value);
+          nOk++;  // dem ca coin khong co signal
+        }else{nFail++;}
+      }
+      // small delay to avoid rate limit
+      await new Promise(r=>setTimeout(r,200));
+    }
+
+    // Filter
+    const HIDE=['PUMP_0','SHORT HIST','LONG HIST'];
+    const filtered=allResults.filter(s=>!HIDE.includes(s.state));
+
+    clearProgress();
+    const now=new Date();
+    const ts=new Date(now.getTime()+7*3600000).toISOString().slice(0,16).replace('T',' ')+' UTC+7';
+    const failTxt=nFail>0?` (${nFail} loi)`:''; 
+    document.getElementById('meta').textContent=`${ts} | ${nOk} coins${failTxt} | 24h`;
+    renderSignals(filtered,nOk);
+
+  }catch(e){
+    clearProgress();
+    setError('Loi: '+e.message);
+  }finally{
+    scanning=false;
+    document.getElementById('ico').className='';
+  }
+}
+
+function renderSignals(sigs, nCoins){
+  document.getElementById('st').textContent=sigs.length;
+  document.getElementById('ss').textContent=sigs.filter(x=>x.sig_type==='SHORT').length;
+  document.getElementById('sl2').textContent=sigs.filter(x=>x.sig_type==='LONG').length;
+  document.getElementById('sc2').textContent=nCoins;
+
+  const nSN=sigs.filter(x=>x.state==='SHORT NOW').length;
+  const nLN=sigs.filter(x=>x.state==='LONG NOW').length;
+  const nSR=sigs.filter(x=>x.state==='SHORT READY').length;
+  const nLR=sigs.filter(x=>x.state==='LONG READY').length;
+  const ab=document.getElementById('ab');
+  if(nSN||nLN||nSR||nLR){
+    let m='';
+    if(nSN)m+=`SHORT NOW x${nSN}  `;
+    if(nLN)m+=`LONG NOW x${nLN}  `;
+    if(nSR)m+=`SHORT READY x${nSR}  `;
+    if(nLR)m+=`LONG READY x${nLR}  `;
+    ab.textContent=m.trim();ab.className='abar on';
+  }else{ab.className='abar';}
+
+  if(sigs.length===0){
+    document.getElementById('main').innerHTML='<div class="empty">Khong co tin hieu trong 24h qua</div>';
+    return;
+  }
+
+  const g={};
+  for(const x of sigs){if(!g[x.state])g[x.state]=[];g[x.state].push(x);}
+  for(const v of Object.values(g))v.sort((a,b)=>a.hours_ago-b.hours_ago);
+
+  let h='';
+  for(const st of ORD){
+    const L=g[st];if(!L||!L.length)continue;
+    h+=`<div class="stit">${DS[st]||st}</div>`;
+    for(const x of L){
+      const bc=BG[x.state]||'cQ';
+      const ep=x.entry_price?`<span class="epv">${Number(x.entry_price).toFixed(6)}</span>`:`<span class="epn">(nen ke)</span>`;
+      const etLabel=x.entry_time||'?';
+      const etColor=x.sig_type==='SHORT'?'#E74C3C':'#27AE60';
+      h+=`<div class="card"><div class="chdr"><span class="sbg ${bc}">${st}</span><span class="sym">${x.symbol}</span><span class="stb ${x.sig_type==='SHORT'?'SS':'LS'}">${x.sig_type}</span>${haS(x.hours_ago)}</div><div class="cbody"><div class="chips">${caseC(x.case_lbl)}${nC(x.n2_green,'n+2')}${nC(x.n3_green,'n+3')}${vS(x.vol_spike)}<span class="pt">${x.n0_time}</span></div><div class="note">${fN(x.note)}</div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:#666">Entry Time</span><span style="font-size:12px;font-weight:700;color:${etColor}">${etLabel}</span></div><div class="eprow"><span class="epl">Entry Price</span>${ep}</div></div></div>`;
+    }
+    h+='<div class="dvd"></div>';
+  }
+  document.getElementById('main').innerHTML=h;
+}
+</script>
+</body></html>
